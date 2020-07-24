@@ -24,5 +24,8 @@
         "no-undef": 1,
         "no-unused-vars": 1,
         "semi": [1, "never"]
+    },
+    "globals": {
+        "process": false
     }
 }
