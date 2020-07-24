@@ -11,17 +11,26 @@ const RenderedRoute = (Component, child, isLogin) => (props) => {
   const { pathname } = location
   if (pathname === '/') {
     if (isLogin) {
-      return (<Redirect to="/dashboard" />)
-    } return (<Redirect to="/login" />)
+      return <Redirect to="/dashboard" />
+    }
+    return <Redirect to="/login" />
   }
+
   if (!isLogin && pathname !== '/login') {
-    return (<Redirect to="/login" />)
+    return (
+      <Redirect
+        to={{
+          pathname: '/login',
+          state: { from: location }
+        }}
+      />
+    )
   } else if (isLogin && pathname !== '/dashboard' && child.length <= 0) {
     return (<Component {...props} child={child} />)
-  } else if (pathname === '/login') {
+  } else if (isLogin && pathname === '/login') {
     return (<Redirect to="/dashboard" />)
   }
-  return (<Component {...props} child={child} />)
+  return <Component {...props} child={child} />
 }
 
 const MainRouter = ({ path, component, title, exact = false, child = [] }) => {
