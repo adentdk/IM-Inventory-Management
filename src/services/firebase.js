@@ -14,12 +14,13 @@ const firebaseConfig = config.firebase
 firebase.initializeApp(firebaseConfig)
 
 // Initialize other services on firebase instance
+firebase.auth()
 firebase.firestore()
 
 // react-redux-firebase config
 const rrfConfig = {
-  userProfile: 'users'
-  // useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+  userProfile: 'users',
+  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
 }
 
 export const rrfProps = {
