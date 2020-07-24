@@ -4,9 +4,8 @@ import Login from './login.pages'
 
 const enhance = connect(
   // Map redux state to component props
-  ({ firebase: { auth, profile } }) => ({
-    auth,
-    profile
+  ({ firebase: { auth } }) => ({
+    auth
   })
 )
 

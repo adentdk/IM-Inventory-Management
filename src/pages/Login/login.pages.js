@@ -5,12 +5,9 @@ import { withRouter } from 'react-router-dom'
 
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
+import Alert from '@material-ui/lab/Alert'  
 import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import Link from '@material-ui/core/Link'
-import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
@@ -31,16 +28,25 @@ function Login() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [remember, setRemember] = useState(false)
-
+  const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleEmailChange = e => setEmail(e.target.value)
   const handlePasswordChange = e => setPassword(e.target.value)
-  const handleRememberChange = e => setRemember(e.target.checked)
 
   const handleFormSubmit = e => {
     e.preventDefault()
+    setLoading(true)
     firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(() => {
+      setErrorMessage('')
+    })
+    .catch(error => {
+      setErrorMessage(error.message)
+    })
+    .finally(() => {
+      setLoading(false)
+    })
   }
 
   return (
@@ -80,31 +86,23 @@ function Login() {
             id="password"
             autoComplete="current-password"
           />
-          <FormControlLabel
-            control={<Checkbox checked={remember} onChange={handleRememberChange} color="primary" />}
-            label="Remember me"
-          />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            disabled={loading}
             className={classes.submit}
           >
-            Log In
+            {loading ? 'Loading' : 'Log In'}
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
+          {errorMessage !== '' && (
+            <Box mb={3}>
+              <Alert variant="outlined" severity="error">
+                {errorMessage}
+              </Alert>
+            </Box>
+          )}
         </form>
       </div>
       <Box mt={8}>
@@ -118,6 +116,7 @@ export default withRouter(Login)
 
 Login.propTypes = {
   history: PropTypes.shape({
-    replace: PropTypes.func.isRequired,
+    go: PropTypes.func.isRequired,
   }).isRequired,
+  auth: PropTypes.object
 }
