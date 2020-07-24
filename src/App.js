@@ -1,6 +1,6 @@
 import React from 'react'
-import { Provider } from 'react-redux'
-import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
+import { Provider, useSelector } from 'react-redux'
+import { ReactReduxFirebaseProvider, isLoaded } from 'react-redux-firebase'
 import { createBrowserHistory } from 'history'
 import { BrowserRouter, Switch } from 'react-router-dom'
 import {routes} from './routes/routes'
@@ -12,14 +12,22 @@ import {rrfProps} from './services/firebase'
 
 const browserHistory = createBrowserHistory()
 
+function AuthIsLoaded({ children }) {
+  const auth = useSelector(state => state.firebase.auth)
+  if (!isLoaded(auth)) return <div>splash screen...</div>
+  return children
+}
+
 const App = () => {
   return (
     <Provider store={store}>
       <ReactReduxFirebaseProvider {...rrfProps}>
         <BrowserRouter>
-          <Switch>
-            <MappedRoute history={browserHistory} routes={routes} />
-          </Switch>
+          <AuthIsLoaded>
+            <Switch>
+              <MappedRoute history={browserHistory} routes={routes} />
+            </Switch>
+          </AuthIsLoaded>
         </BrowserRouter>
       </ReactReduxFirebaseProvider>
     </Provider>
