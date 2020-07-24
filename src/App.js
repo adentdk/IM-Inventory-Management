@@ -7,7 +7,7 @@ import {routes} from './routes/routes'
 import { MappedRoute } from './routes/components'
 import './App.css'
 
-import store from './redux/store'
+import {store} from './redux/store'
 import {rrfProps} from './services/firebase'
 
 const browserHistory = createBrowserHistory()

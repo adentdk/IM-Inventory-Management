@@ -5,7 +5,7 @@ import 'firebase/firestore'
 
 import { createFirestoreInstance } from 'redux-firestore'
 
-import store from './../redux/store'
+import {store} from './../redux/store'
 import config from '../config'
 
 const firebaseConfig = config.firebase

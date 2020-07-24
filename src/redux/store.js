@@ -1,4 +1,6 @@
 import { applyMiddleware, compose, createStore } from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
+import localStorage from 'redux-persist/lib/storage'
 
 import logger from 'redux-logger'
 import thunk from 'redux-thunk'
@@ -10,12 +12,21 @@ const middlewares = [
   logger,
   thunk.withExtraArgument(getFirebase)
 ]
-
 const initialState = {}
-const store = createStore(
-  rootReducer,
+
+const persistConfig = {
+  key: 'root',
+  storage: localStorage
+}
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+export const store = createStore(
+  persistedReducer,
   initialState,
   compose(applyMiddleware(...middlewares))
 )
 
-export default store
+
+
+export const persistor = persistStore(store)
