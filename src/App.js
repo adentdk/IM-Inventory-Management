@@ -1,23 +1,28 @@
 import React from 'react'
+import { Provider } from 'react-redux'
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
 import { createBrowserHistory } from 'history'
 import { BrowserRouter, Switch } from 'react-router-dom'
+import {routes} from './routes/routes'
+import { MappedRoute } from './routes/components'
 import './App.css'
 
-// Routes
-import {routes} from './routes/routes'
-// Routes
-import { MappedRoute } from './routes/components'
-// Stores
-// Browser history
+import store from './redux/store'
+import {rrfProps} from './services/firebase'
+
 const browserHistory = createBrowserHistory()
 
 const App = () => {
   return (
-      <BrowserRouter>
-        <Switch>
-          <MappedRoute history={browserHistory} routes={routes} />
-        </Switch>
-      </BrowserRouter>
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider {...rrfProps}>
+        <BrowserRouter>
+          <Switch>
+            <MappedRoute history={browserHistory} routes={routes} />
+          </Switch>
+        </BrowserRouter>
+      </ReactReduxFirebaseProvider>
+    </Provider>
   )
 }
 
