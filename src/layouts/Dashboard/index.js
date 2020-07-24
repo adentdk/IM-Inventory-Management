@@ -13,7 +13,7 @@ import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import { mainListItems } from './listItems'
+import MainListItem from './components/MainListItem'
 
 import {Copyright, Menu} from './../../components'
 
@@ -115,7 +115,7 @@ export default function Dashboard(props) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <IconButton
             edge="start"
@@ -145,7 +145,9 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List>
+          <MainListItem handleDrawerClose={handleDrawerClose} />
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
