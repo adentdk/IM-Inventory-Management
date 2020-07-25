@@ -22,12 +22,12 @@ export default function AddProductCategory() {
 
   const handleSaveCategory = () => {
     firestore.collection('product-categories').add({name}).then(() => {
-      history.push('/product-category')
+      history.push('/home/product-category')
     }) 
   }
 
   const handleClose = () => {
-    history.push('/product-category')
+    history.push('/home/product-category')
   }
 
   return (

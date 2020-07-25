@@ -7,25 +7,25 @@ import { isLoaded, isEmpty } from 'react-redux-firebase'
 const RenderedRoute = (Component, child, isLogin, title) => (props) => {
   const { location } = props
   const { pathname } = location
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '') {
     if (isLogin) {
-      return <Redirect to="/dashboard/home" />
+      return <Redirect to="/home/dashboard" />
     }
-    return <Redirect to="/login" />
+    return <Redirect to="/auth/login" />
   }
-  if (!isLogin && pathname !== '/login') {
+  if (!isLogin && pathname !== '/auth/login') {
     return (
       <Redirect
         to={{
-          pathname: '/login',
+          pathname: '/auth/login',
           state: { from: location }
         }}
       />
     )
-  } else if (isLogin && pathname !== '/dashboard/home' && child.length <= 0) {
+  } else if (isLogin && pathname !== '/home/dashboard' && child.length <= 0) {
     return (<Component {...props} title={title} child={child} />)
-  } else if (isLogin && pathname === '/login') {
-    return (<Redirect to="/dashboard/home" />)
+  } else if (isLogin && pathname === '/auth/login') {
+    return (<Redirect to="/home/dashboard" />)
   }
   return <Component {...props} title={title} child={child} />
 }

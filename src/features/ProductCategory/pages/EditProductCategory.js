@@ -39,12 +39,12 @@ export default function EditProductCategory() {
 
   const handleSaveCategory = () => {
     firestore.collection('product-categories').doc(id).update({name}).then(() => {
-      history.push('/product-category')
+      history.push('/home/product-category')
     }) 
   }
 
   const handleClose = () => {
-    history.push('/product-category')
+    history.push('/home/product-category')
   }
 
   const loaded = isLoaded(productCategories)

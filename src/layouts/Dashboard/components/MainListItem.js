@@ -29,13 +29,13 @@ function MainListItem(props) {
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/product')}>
+      <ListItem button onClick={() => menuClick('/home/product')}>
         <ListItemIcon>
           <BallotRoundedIcon />
         </ListItemIcon>
         <ListItemText primary="Products" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/product-category')}>
+      <ListItem button onClick={() => menuClick('/home/product-category')}>
         <ListItemIcon>
           <CategoryRoundedIcon />
         </ListItemIcon>

@@ -52,7 +52,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   table: {
-    minWidth: 750,
+    minWidth: 200,
   },
   visuallyHidden: {
     border: 0,

@@ -19,31 +19,39 @@ const ProductCategoryEdit = lazy(() => import('./../features/ProductCategory/pag
 
 export const routes = [
   {
-    path: '/',
+    path: '',
     exact: false,
     title: 'Root',
     component: CleanLayout,
     child: [
       {
-        path: '/login',
-        title: 'Login',
-        exact: true,
-        component: Lazyload(Login)
+        path: '/auth',
+        title: 'LoginLayout',
+        exact: false,
+        component: BasicLayout,
+        child: [
+          {
+            path: '/auth/login',
+            title: 'Login',
+            exact: true,
+            component: Lazyload(Login)
+          },
+        ]
       },
       {
-        path: '/',
+        path: '/home',
         title: 'DashboardLayout',
         exact: false,
         component: DashboardLayout,
         child: [
           {
-            path: '/dashboard',
+            path: '/home/dashboard',
             title: 'Dashboard',
             exact: false,
             component: BasicLayout,
             child: [
               {
-                path: '/dashboard',
+                path: '/home/dashboard',
                 title: 'Dashboard',
                 exact: true,
                 component: Lazyload(DashboardHome)
@@ -51,25 +59,25 @@ export const routes = [
             ]
           },
           {
-            path: '/product-category',
+            path: '/home/product-category',
             title: 'Product Category',
             exact: false,
             component: BasicLayout,
             child: [
               {
-                path: '/product-category',
+                path: '/home/product-category',
                 title: 'Product Category',
                 exact: true,
                 component: Lazyload(ProductCategoryList)
               },
               {
-                path: '/product-category/add',
+                path: '/home/product-category/add',
                 title: 'Add Category',
                 exact: true,
                 component: Lazyload(ProductCategoryAdd)
               },
               {
-                path: '/product-category/:id/edit',
+                path: '/home/product-category/:id/edit',
                 title: 'Edit Category',
                 exact: true,
                 component: Lazyload(ProductCategoryEdit)

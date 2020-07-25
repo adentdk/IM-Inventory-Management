@@ -101,6 +101,7 @@ export default function Dashboard(props) {
     <div className={classes.root}>
       <CssBaseline />
       <Navbar
+        position="absolute"
         title={global.title}
         rightIcon={<MenuIcon />}
         rightIconAction={handleDrawerOpen}
