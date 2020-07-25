@@ -1,4 +1,5 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -101,10 +102,28 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Dashboard(props) {
-
   const {child} = props
-
   const classes = useStyles()
+  const history = useHistory()
+
+  const activeChild = () => {
+    const pathname = history.location.pathname
+    const historyPath = pathname.split('/')
+    let activeChild = {}
+    child.forEach(item => {
+      if (item.path === pathname) {
+        activeChild = item
+      } else if (historyPath.length === 4) {
+        console.log(item.child)
+        if (item.child) {
+          activeChild = item.child.find(nestedItem => nestedItem.path === pathname)
+        }
+      }
+    })
+
+    return activeChild
+  }
+
   const [open, setOpen] = React.useState(false)
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -127,7 +146,7 @@ export default function Dashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            {activeChild().title}
           </Typography>
           <Menu />
         </Toolbar>

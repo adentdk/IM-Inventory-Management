@@ -11,11 +11,10 @@ const RenderedRoute = (Component, child, isLogin) => (props) => {
   const { pathname } = location
   if (pathname === '/') {
     if (isLogin) {
-      return <Redirect to="/dashboard" />
+      return <Redirect to="/dashboard/home" />
     }
     return <Redirect to="/login" />
   }
-
   if (!isLogin && pathname !== '/login') {
     return (
       <Redirect
@@ -25,10 +24,10 @@ const RenderedRoute = (Component, child, isLogin) => (props) => {
         }}
       />
     )
-  } else if (isLogin && pathname !== '/dashboard' && child.length <= 0) {
+  } else if (isLogin && pathname !== '/dashboard/home' && child.length <= 0) {
     return (<Component {...props} child={child} />)
   } else if (isLogin && pathname === '/login') {
-    return (<Redirect to="/dashboard" />)
+    return (<Redirect to="/dashboard/home" />)
   }
   return <Component {...props} child={child} />
 }

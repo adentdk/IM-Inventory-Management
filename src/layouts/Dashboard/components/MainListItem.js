@@ -23,19 +23,19 @@ function MainListItem(props) {
 
   return (
     <React.Fragment>
-      <ListItem button onClick={() => menuClick('/dashboard')}>
+      <ListItem button onClick={() => menuClick('home')}>
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/product')}>
+      <ListItem button onClick={() => menuClick('product')}>
         <ListItemIcon>
           <BallotRoundedIcon />
         </ListItemIcon>
         <ListItemText primary="Products" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/product-category')}>
+      <ListItem button onClick={() => menuClick('product-category')}>
         <ListItemIcon>
           <CategoryRoundedIcon />
         </ListItemIcon>
