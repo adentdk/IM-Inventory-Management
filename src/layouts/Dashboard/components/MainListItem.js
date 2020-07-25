@@ -1,6 +1,6 @@
 import React from 'react'
 import PropsTypes from 'prop-types'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
@@ -10,32 +10,38 @@ import CategoryRoundedIcon from '@material-ui/icons/CategoryRounded'
 import BallotRoundedIcon from '@material-ui/icons/BallotRounded'
 
 function MainListItem(props) {
-  const {handleDrawerClose, history} = props
-
-  const menuClick = pathname => {
-    
-    if (history.pathname !== pathname) {
-      history.push(pathname)
-    }
-    
-    handleDrawerClose()
-  }
+  const {handleDrawerClose} = props
 
   return (
     <React.Fragment>
-      <ListItem button onClick={() => menuClick('/dashboard')}>
+      <ListItem
+        button
+        component={Link}
+        to="/home/dashboard"
+        onClick={handleDrawerClose}
+      >
         <ListItemIcon>
           <DashboardIcon />
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/home/product')}>
+      <ListItem
+        button
+        component={Link}
+        to="/home/product"
+        onClick={handleDrawerClose}
+      >
         <ListItemIcon>
           <BallotRoundedIcon />
         </ListItemIcon>
         <ListItemText primary="Products" />
       </ListItem>
-      <ListItem button onClick={() => menuClick('/home/product-category')}>
+      <ListItem
+        button
+        component={Link}
+        to="/home/product-category"
+        onClick={handleDrawerClose}
+      >
         <ListItemIcon>
           <CategoryRoundedIcon />
         </ListItemIcon>
