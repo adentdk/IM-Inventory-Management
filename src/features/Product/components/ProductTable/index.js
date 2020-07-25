@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { useFirestoreConnect, isLoaded, isEmpty, useFirestore } from 'react-redux-firebase'
+import { useFirestoreConnect, isLoaded, isEmpty, useFirestore, useFirebase } from 'react-redux-firebase'
 import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -40,6 +40,7 @@ const useStyles = makeStyles(() => ({
 
 export default function EnhancedTable() {
   const classes = useStyles()
+  const firebase = useFirebase()
   const firestore = useFirestore()
   useFirestoreConnect([
     { collection: 'products', storeAs: 'products' } // or 'todos'
@@ -110,13 +111,17 @@ export default function EnhancedTable() {
     setSelected([row])
   }
 
-  const handleDeleteCategory = () => {
-    const category = selected[0]
-    firestore.collection('product-categories').doc(category.id).delete().then(() => {
-      handleClose()
-      setSnackbarMessage('The products was successfully deleted')
-      setSnackbarOpen(true)
-      setSelected([])
+  const handleDelete = () => {
+    const product = selected[0]
+    const imagePath = product.image.split('/')
+    console.log(imagePath)
+    firestore.collection('products').doc(product.id).delete().then(() => {
+      // firebase.deleteFile(product.image).finally(() => {
+        handleClose()
+        setSnackbarMessage('The products was successfully deleted')
+        setSnackbarOpen(true)
+        setSelected([])
+      // })
     })
   }
 
@@ -126,7 +131,7 @@ export default function EnhancedTable() {
 
   const loading = !isLoaded(products)
 
-  const productCategoryCount = emptyRows ? 0 : products.length
+  const productCount = emptyRows ? 0 : products.length
 
   return (
     <div className={classes.root}>
@@ -147,7 +152,7 @@ export default function EnhancedTable() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={productCategoryCount}
+                rowCount={productCount}
               />
               <EnhancedTableBody
                 products={products}
@@ -166,7 +171,7 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={productCategoryCount}
+          count={productCount}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -184,7 +189,7 @@ export default function EnhancedTable() {
           <Button onClick={handleClose} color="primary">
             No,
           </Button>
-          <Button onClick={handleDeleteCategory} color="secondary" autoFocus>
+          <Button onClick={handleDelete} color="secondary" autoFocus>
             Yes, Delete
           </Button>
         </DialogActions>

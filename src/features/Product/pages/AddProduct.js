@@ -54,35 +54,40 @@ export default function AddProduct() {
   }
 
   const handleSaveCategory = () => {
+    const storagePath = 'products'
+    const dbPath = 'products'
 
-    const storageRef = firebase.storage().ref('/products')
+    const data = {
+      name,
+      quantity,
+      unit,
+      category
+    }
 
-    const uploadTask = storageRef.child(`/images/${image.name}`).put(image)
-
-    uploadTask.on('state_changed', 
-    (snapShot) => {
-      //takes a snap shot of the process as it is happening
-      console.log(snapShot)
-    }, (err) => {
-      //catches the errors
-      console.log(err)
-    }, () => {
-      // gets the functions from storage refences the image storage in firebase by the children
-      // gets the download url then sets the image from firebase as the value for the imgUrl key:
-      storageRef.child(`/images/${image.name}`).getDownloadURL()
-       .then(fireBaseUrl => {
-          const data = {
-            name,
-            quantity,
-            image: fireBaseUrl,
-            unit,
-            category
+    firestore.collection('products').add(data).then(result => {
+      return firebase
+        .uploadFile(storagePath, image, dbPath, {
+          name: result.id,
+          documentId: result.id,
+          metadataFactory: async (uploadRes, firebase, metadata, downloadURL) => {
+            const {
+              metadata: { name, fullPath }
+            } = uploadRes
+            const data = {
+              image: {
+                name,
+                fullPath,
+                url: downloadURL
+              }
+            }
+            await result.update(data)
+            return data
           }
-          firestore.collection('products').add(data).then(result => {
-            console.log(result)
-            handleClose()
-          }) 
-       })
+        })
+    })
+    .then(() => {
+      console.log('File uploaded successfully')
+      handleClose()
     })
   }
 

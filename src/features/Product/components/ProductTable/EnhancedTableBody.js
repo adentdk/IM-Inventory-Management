@@ -86,7 +86,7 @@ export default function EnhancedTableBody(props) {
               />
             </TableCell>
             <TableCell component="th" id={labelId} scope="row" padding="none" align="center" >
-              <Avatar alt={row.name} src={row.image} className={classes.large} />
+              <Avatar alt={row.name} src={row.image?.url} className={classes.large} />
             </TableCell>
             <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
               {row.name}

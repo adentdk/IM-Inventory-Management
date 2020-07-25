@@ -178,7 +178,7 @@ export default function EditProduct() {
         setCategory(product.category)
       }
       if (imageUrl === null) {
-        setImageUrl(product.image)
+        setImageUrl(product.image.url)
       }
     }
 
