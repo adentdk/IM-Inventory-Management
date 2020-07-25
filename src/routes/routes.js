@@ -16,6 +16,10 @@ const ProductCategoryList = lazy(() => import('./../features/ProductCategory/pag
 const ProductCategoryAdd = lazy(() => import('./../features/ProductCategory/pages/AddProductCategory'))
 const ProductCategoryEdit = lazy(() => import('./../features/ProductCategory/pages/EditProductCategory'))
 
+const ProductList = lazy(() => import('./../features/Product/pages/ProductList'))
+const ProductAdd = lazy(() => import('./../features/Product/pages/AddProduct'))
+const ProductEdit = lazy(() => import('./../features/Product/pages/EditProduct'))
+
 
 export const routes = [
   {
@@ -55,6 +59,32 @@ export const routes = [
                 title: 'Dashboard',
                 exact: true,
                 component: Lazyload(DashboardHome)
+              }
+            ]
+          },
+          {
+            path: '/home/product',
+            title: 'ProductLayout',
+            exact: false,
+            component: BasicLayout,
+            child: [
+              {
+                path: '/home/product',
+                title: 'Product',
+                exact: true,
+                component: Lazyload(ProductList)
+              },
+              {
+                path: '/home/product/add',
+                title: 'Add Product',
+                exact: true,
+                component: Lazyload(ProductAdd)
+              },
+              {
+                path: '/home/product/:id/edit',
+                title: 'Edit Product',
+                exact: true,
+                component: Lazyload(ProductEdit)
               }
             ]
           },
