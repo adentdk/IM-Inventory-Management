@@ -20,7 +20,6 @@ const ProductList = lazy(() => import('./../features/Product/pages/ProductList')
 const ProductAdd = lazy(() => import('./../features/Product/pages/AddProduct'))
 const ProductEdit = lazy(() => import('./../features/Product/pages/EditProduct'))
 
-
 export const routes = [
   {
     path: '',
