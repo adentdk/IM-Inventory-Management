@@ -55,7 +55,7 @@ function EnhancedTableToolbar(props) {
             {numSelected} selected
           </Typography>
         ) : (
-          <Title className={classes.title}>Product Categories</Title>
+          <Title className={classes.title}>Products</Title>
         )}
 
         {numSelected > 0 ? (
@@ -65,8 +65,8 @@ function EnhancedTableToolbar(props) {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Add category">
-            <IconButton aria-label="add category" onClick={handleButtonAdd}>
+          <Tooltip title="Add product">
+            <IconButton aria-label="add product" onClick={handleButtonAdd}>
               <AddIcon />
             </IconButton>
           </Tooltip>

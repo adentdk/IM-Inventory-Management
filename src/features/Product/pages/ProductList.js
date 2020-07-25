@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import Container from '@material-ui/core/Container'
 import Paper from '@material-ui/core/Paper'
 
-import ProductCategoryTable from '../components/ProductTable'
+import ProductTable from '../components/ProductTable'
 
 import styles from '../styles'
 import { useDispatch } from 'react-redux'
@@ -29,7 +29,7 @@ export default function ProductList() {
   return (
     <Container maxWidth="lg" className={classes.container}>
       <Paper className={fixedHeightPaper}>
-        <ProductCategoryTable />
+        <ProductTable />
       </Paper>
     </Container>
   )
