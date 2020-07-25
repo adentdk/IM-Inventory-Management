@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import { useFirestore } from 'react-redux-firebase'
 import clsx from 'clsx'
 import { lighten, makeStyles } from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -12,7 +11,7 @@ import AddIcon from '@material-ui/icons/AddCircle'
 
 
 import {Title} from '../../../../components'
-import FormAddCategory from '../FormAddCategory'
+import { useHistory } from 'react-router-dom'
 
 
 const useToolbarStyles = makeStyles((theme) => ({
@@ -36,18 +35,12 @@ const useToolbarStyles = makeStyles((theme) => ({
 }))
 
 function EnhancedTableToolbar(props) {
-  const firestore = useFirestore()
+  const history = useHistory()
   const classes = useToolbarStyles()
   const { numSelected } = props
 
-  const [showForm, setShowForm] = useState(false)
-
-  const handleSaveProductCategory = data => {
-    return new Promise(resolve => {
-      firestore.collection('product-categories').add(data).then(() => {
-        resolve(true)
-      })
-    })
+  const handleButtonAdd = () => {
+    history.push('product-category/add') 
   }
 
   return (
@@ -73,13 +66,12 @@ function EnhancedTableToolbar(props) {
           </Tooltip>
         ) : (
           <Tooltip title="Add category">
-            <IconButton aria-label="add category" onClick={() => setShowForm(true)}>
+            <IconButton aria-label="add category" onClick={handleButtonAdd}>
               <AddIcon />
             </IconButton>
           </Tooltip>
         )}
       </Toolbar>
-      <FormAddCategory open={showForm} setOpen={setShowForm} handleSave={handleSaveProductCategory} />
     </React.Fragment>
   )
 }

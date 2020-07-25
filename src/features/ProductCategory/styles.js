@@ -14,4 +14,7 @@ export default () => makeStyles((theme) => ({
   fixedHeight: {
     height: 480,
   },
+  fullHeight: {
+    height: '100%'
+  }
 }))

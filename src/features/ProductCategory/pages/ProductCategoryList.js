@@ -1,28 +1,35 @@
 import React from 'react'
 import clsx from 'clsx'
 import Container from '@material-ui/core/Container'
-import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
 
 import ProductCategoryTable from './../components/ProductCategoryTable'
 
 import styles from './../styles'
+import { useDispatch } from 'react-redux'
+import { setAppBarTitle, setScreenType } from '../../../redux/actions/global-action'
 
 const useStyles = styles()
 
 export default function ProductCategoryList() {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+  React.useEffect(() => {
+    function bootstrapAsync() {
+      dispatch(setAppBarTitle('Product Category'))
+      dispatch(setScreenType('view'))
+    }
+
+    bootstrapAsync()
+  }, [])
+
+  const fixedHeightPaper = clsx(classes.paper, classes.fullHeight)
   return (
     <Container maxWidth="lg" className={classes.container}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12} lg={12}>
-          <Paper className={fixedHeightPaper}>
-            <ProductCategoryTable />
-          </Paper>
-        </Grid>
-      </Grid>
+      <Paper className={fixedHeightPaper}>
+        <ProductCategoryTable />
+      </Paper>
     </Container>
   )
 }

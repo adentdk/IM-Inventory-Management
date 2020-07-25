@@ -2,7 +2,6 @@ import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 import { MappedRoute } from '../../routes/components'
 
-
 export default class Clean extends PureComponent {
   render () {
     const {child} = this.props

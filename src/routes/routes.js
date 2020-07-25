@@ -9,11 +9,12 @@ import {
 } from './../layouts'
 
 const Login = lazy(() => import('./../features/Login'))
-const Dashboard = lazy(() => import('./../features/Dashboard'))
+
+const DashboardHome = lazy(() => import('./../features/Dashboard/pages/Home'))
 
 const ProductCategoryList = lazy(() => import('./../features/ProductCategory/pages/ProductCategoryList'))
-const ProductCategoryAdd = lazy(() => import('./../features/ProductCategory/pages/ProductCategoryList'))
-const ProductCategoryEdit = lazy(() => import('./../features/ProductCategory/pages/ProductCategoryList'))
+const ProductCategoryAdd = lazy(() => import('./../features/ProductCategory/pages/AddProductCategory'))
+const ProductCategoryEdit = lazy(() => import('./../features/ProductCategory/pages/EditProductCategory'))
 
 
 export const routes = [
@@ -30,38 +31,46 @@ export const routes = [
         component: Lazyload(Login)
       },
       {
-        path: '/dashboard',
+        path: '/',
         title: 'DashboardLayout',
         exact: false,
         component: DashboardLayout,
         child: [
           {
-            path: '/dashboard/home',
+            path: '/dashboard',
             title: 'Dashboard',
-            exact: true,
-            component: Lazyload(Dashboard),
+            exact: false,
+            component: BasicLayout,
+            child: [
+              {
+                path: '/dashboard',
+                title: 'Dashboard',
+                exact: true,
+                component: Lazyload(DashboardHome)
+              }
+            ]
           },
           {
-            path: '/dashboard/product-category',
+            path: '/product-category',
             title: 'Product Category',
             exact: false,
             component: BasicLayout,
             child: [
               {
-                path: '/dashboard/product-category',
+                path: '/product-category',
                 title: 'Product Category',
                 exact: true,
                 component: Lazyload(ProductCategoryList)
               },
               {
-                path: '/dashboard/product-category/add',
-                title: 'Add New Product Category',
+                path: '/product-category/add',
+                title: 'Add Category',
                 exact: true,
                 component: Lazyload(ProductCategoryAdd)
               },
               {
-                path: '/dashboard/product-category/:id/edit',
-                title: 'Edit Product Category',
+                path: '/product-category/:id/edit',
+                title: 'Edit Category',
                 exact: true,
                 component: Lazyload(ProductCategoryEdit)
               }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -7,6 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Drawer from '@material-ui/core/Drawer'
 import AppBar from '@material-ui/core/AppBar'
 import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
 import Toolbar from '@material-ui/core/Toolbar'
 import List from '@material-ui/core/List'
 import Typography from '@material-ui/core/Typography'
@@ -19,6 +19,7 @@ import MainListItem from './components/MainListItem'
 import {Copyright, Menu} from './../../components'
 
 import {MappedRoute} from './../../routes/components'
+import { useSelector } from 'react-redux'
 
 const drawerWidth = 240
 
@@ -85,44 +86,15 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
+  }
 }))
 
 export default function Dashboard(props) {
   const {child} = props
   const classes = useStyles()
-  const history = useHistory()
+  const global = useSelector(state => state.global)
 
-  const activeChild = () => {
-    const pathname = history.location.pathname
-    const historyPath = pathname.split('/')
-    let activeChild = {}
-    child.forEach(item => {
-      if (item.path === pathname) {
-        activeChild = item
-      } else if (historyPath.length === 4) {
-        console.log(item.child)
-        if (item.child) {
-          activeChild = item.child.find(nestedItem => nestedItem.path === pathname)
-        }
-      }
-    })
-
-    return activeChild
-  }
+  const isForm = global.screenType === 'form'
 
   const [open, setOpen] = React.useState(false)
   const handleDrawerOpen = () => {
@@ -131,6 +103,7 @@ export default function Dashboard(props) {
   const handleDrawerClose = () => {
     setOpen(false)
   }
+  const handleButtonSave = () => global.screenAction()
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -146,9 +119,15 @@ export default function Dashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {activeChild().title}
+            {global.title}
           </Typography>
-          <Menu />
+          {isForm ? (
+            <Button autoFocus color="inherit" onClick={handleButtonSave}>
+              save
+            </Button>
+          ) : (
+            <Menu />
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -170,9 +149,13 @@ export default function Dashboard(props) {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <MappedRoute routes={child} />
-        <Box pb={4}>
-          <Copyright />
+        <Box display="flex" minHeight="93%" flexDirection="column">
+          <Box flexGrow="1">
+            <MappedRoute routes={child} />
+          </Box>
+          <Box flexShrink="0" pb={4}>
+            <Copyright />
+          </Box>
         </Box>
       </main>
     </div>

@@ -4,9 +4,7 @@ import { Redirect, Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { isLoaded, isEmpty } from 'react-redux-firebase'
 
-const RenderedRoute = (Component, child, isLogin) => (props) => {
-  // const state = store.getState();
-  // eslint-disable-next-line react/prop-types
+const RenderedRoute = (Component, child, isLogin, title) => (props) => {
   const { location } = props
   const { pathname } = location
   if (pathname === '/') {
@@ -25,11 +23,11 @@ const RenderedRoute = (Component, child, isLogin) => (props) => {
       />
     )
   } else if (isLogin && pathname !== '/dashboard/home' && child.length <= 0) {
-    return (<Component {...props} child={child} />)
+    return (<Component {...props} title={title} child={child} />)
   } else if (isLogin && pathname === '/login') {
     return (<Redirect to="/dashboard/home" />)
   }
-  return <Component {...props} child={child} />
+  return <Component {...props} title={title} child={child} />
 }
 
 const MainRouter = ({ path, component, title, exact = false, child = [] }) => {
