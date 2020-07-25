@@ -1,43 +1,93 @@
-import React, { useState } from 'react'
-import clsx from 'clsx'
-import Paper from '@material-ui/core/Paper'
+import React, { useState, useEffect } from 'react'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import CloseIcon from '@material-ui/icons/Close'
 import TextField from '@material-ui/core/TextField'
 
-import styles from '../styles'
-import { setAppBarTitle, setScreenType } from '../../../redux/actions/global-action'
-import { useDispatch } from 'react-redux'
+import {
+  useFirestore,
+  useFirestoreConnect,
+  isLoaded,
+  isEmpty
+} from 'react-redux-firebase'
+import { useHistory, useParams } from 'react-router-dom'
+
+import { Navbar } from '../../../components'
+
+import styles from './../styles'
+import { useSelector } from 'react-redux'
 
 const useStyles = styles()
-export default function AddProductCategory() {
+export default function EditProductCategory() {
   const classes = useStyles()
+  const history = useHistory()
+  const {id} = useParams()
 
-  const dispatch = useDispatch()
+  const firestore = useFirestore()
+
+  useFirestoreConnect(() => [
+    {
+      collection: 'product-categories',
+      doc: id,
+      storeAs: 'productCategoryDetail'
+    }
+  ])
+
+  const productCategories = useSelector((state) => state.firestore.data.productCategoryDetail)
 
   const [name, setName] = useState('')
 
-  React.useEffect(() => {
-    function bootstrapAsync() {
-      dispatch(setAppBarTitle('Edit Category'))
-      dispatch(setScreenType('form'))
+  const handleSaveCategory = () => {
+    firestore.collection('product-categories').doc(id).update({name}).then(() => {
+      history.push('/product-category')
+    }) 
+  }
+
+  const handleClose = () => {
+    history.push('/product-category')
+  }
+
+  const loaded = isLoaded(productCategories)
+  const empty = isEmpty(productCategories)
+
+  useEffect(() => {
+
+    if(loaded && !empty && name === '') {
+      setName(productCategories.name)
     }
 
-    bootstrapAsync()
-  }, [])
-
-  const handleNameChange = e => setName(e.target.value)
-
-  const fixedHeightPaper = clsx(classes.paper, classes.fullHeight)
+  }, [
+    loaded,
+    empty,
+    name,
+    productCategories,
+    setName
+  ])
 
   return (
-    <Paper className={fixedHeightPaper}>
-      <TextField
-        id="product-category"
-        label="Category Name"
-        value={name}
-        onChange={handleNameChange}
-        fullWidth
-        autoFocus
-      />
-    </Paper>
+    <Dialog fullScreen open={true} onClose={handleClose}>
+    <Navbar
+      position="relative"
+      title="Edit Category"
+      className={classes.appBar}
+      rightIcon={<CloseIcon />}
+      rightIconAction={handleClose}
+      leftIcon="Save"
+      leftIconAction={handleSaveCategory}
+    />
+      {loaded && !empty && (
+        <DialogContent>
+          <TextField
+            id="product-category"
+            label="Category Name"
+            value={name}
+            defaultValue={productCategories.name}
+            onChange={e => setName(e.target.value)}
+            fullWidth
+            autoFocus
+          />
+        </DialogContent>
+      )}
+    </Dialog>
   )
 }

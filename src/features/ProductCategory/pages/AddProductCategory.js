@@ -1,24 +1,19 @@
 import React, { useState } from 'react'
-import clsx from 'clsx'
-import Paper from '@material-ui/core/Paper'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import CloseIcon from '@material-ui/icons/Close'
 import TextField from '@material-ui/core/TextField'
 
 import { useFirestore } from 'react-redux-firebase'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
 
-import {
-  setAppBarTitle,
-  setScreenType,
-  setScreenAction
-} from '../../../redux/actions/global-action'
+import { Navbar } from '../../../components'
 
 import styles from './../styles'
-const useStyles = styles()
 
+const useStyles = styles()
 export default function AddProductCategory() {
   const classes = useStyles()
-  const dispatch = useDispatch()
   const history = useHistory()
 
   const firestore = useFirestore()
@@ -26,32 +21,36 @@ export default function AddProductCategory() {
   const [name, setName] = useState('')
 
   const handleSaveCategory = () => {
-    // firestore.collection('product-categories').add().then(() => {
-    //   history.push('/product-category')
-    // }) 
+    firestore.collection('product-categories').add({name}).then(() => {
+      history.push('/product-category')
+    }) 
   }
-  
-  React.useEffect(() => {
-    function bootstrapAsync() {
-      dispatch(setAppBarTitle('Add Category'))
-      dispatch(setScreenType('form'))
-      dispatch(setScreenAction(handleSaveCategory))
-    }
-    
-    bootstrapAsync()
-  }, [])
-  
-  const fixedHeightPaper = clsx(classes.paper, classes.fullHeight)
+
+  const handleClose = () => {
+    history.push('/product-category')
+  }
+
   return (
-    <Paper className={fixedHeightPaper}>
-      <TextField
-        id="product-category"
-        label="Category Name"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        fullWidth
-        autoFocus
-      />
-    </Paper>
+    <Dialog fullScreen open={true} onClose={handleClose}>
+    <Navbar
+      position="relative"
+      title="Add Category"
+      className={classes.appBar}
+      rightIcon={<CloseIcon />}
+      rightIconAction={handleClose}
+      leftIcon="Save"
+      leftIconAction={handleSaveCategory}
+    />
+      <DialogContent>
+        <TextField
+          id="product-category"
+          label="Category Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          fullWidth
+          autoFocus
+        />
+      </DialogContent>
+    </Dialog>
   )
 }

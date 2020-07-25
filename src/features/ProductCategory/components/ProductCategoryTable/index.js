@@ -125,8 +125,8 @@ export default function EnhancedTable() {
   }
 
   const handleEditCategory = row => e => {
-    e.prevent.default()
-    history.push(`${row.id}/edit`)
+    e.preventDefault()
+    history.push(`/product-category/${row.id}/edit`)
   }
 
   const isSelected = (name) => selected.indexOf(name) !== -1
