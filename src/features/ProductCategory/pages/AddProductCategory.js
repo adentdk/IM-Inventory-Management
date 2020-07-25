@@ -21,13 +21,18 @@ export default function AddProductCategory() {
   const [name, setName] = useState('')
 
   const handleSaveCategory = () => {
+    console.log(history)
     firestore.collection('product-categories').add({name}).then(() => {
-      history.push('/home/product-category')
+      handleClose()
     }) 
   }
 
   const handleClose = () => {
-    history.push('/home/product-category')
+    if (history.length > 0) {
+      history.goBack()
+    } else {
+      history.push('/home/product-category')
+    }
   }
 
   return (

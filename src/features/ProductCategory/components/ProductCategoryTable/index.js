@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { useFirestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { useFirestoreConnect, isLoaded, isEmpty, useFirestore } from 'react-redux-firebase'
 import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -10,7 +10,12 @@ import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
+import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
+
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogTitle from '@material-ui/core/DialogTitle'
 
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -18,7 +23,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import EnhancedTableSkeleton from './EnhancedTableSkeleton'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
-import { useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { Snackbar } from '../../../../components'
 
 
 function descendingComparator(a, b, orderBy) {
@@ -69,16 +75,25 @@ const useStyles = makeStyles(() => ({
 
 export default function EnhancedTable() {
   const classes = useStyles()
-  const history = useHistory()
+  const firestore = useFirestore()
   useFirestoreConnect([
     { collection: 'product-categories', storeAs: 'productCategories' } // or 'todos'
   ])
   const productCategories = useSelector((state) => state.firestore.ordered.productCategories)
   const [order, setOrder] = React.useState('asc')
   const [orderBy, setOrderBy] = React.useState('name')
-  const [selected, setSelected] = React.useState([])
+  const [selected, setSelected] = React.useState(() => [])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+
+  const [deleteDialog, setDeleteDialog] = React.useState(false)
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState(false)
+
+
+  const handleClose = () => {
+    setDeleteDialog(false)
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -124,9 +139,20 @@ export default function EnhancedTable() {
     setPage(0)
   }
 
-  const handleEditCategory = row => e => {
+  const handleDeleteAction = row => e => {
     e.preventDefault()
-    history.push(`/product-category/${row.id}/edit`)
+    setDeleteDialog(true)
+    setSelected([row])
+  }
+
+  const handleDeleteCategory = () => {
+    const category = selected[0]
+    firestore.collection('product-categories').doc(category.id).delete().then(() => {
+      handleClose()
+      setSnackbarMessage('The category was successfully deleted')
+      setSnackbarOpen(true)
+      setSelected([])
+    })
   }
 
   const isSelected = (name) => selected.indexOf(name) !== -1
@@ -186,12 +212,21 @@ export default function EnhancedTable() {
                         </TableCell>
                         <TableCell align="right">
                           <Tooltip title="Edit Category">
-                            <IconButton aria-label="edit category" onClick={handleEditCategory(row)}>
+                            <IconButton
+                              aria-label="edit category"
+                              component={Link}
+                              to={`/home/product-category/${row.id}/edit`}
+                            >
                               <EditIcon />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Delete Category">
-                            <IconButton aria-label="delete category">
+                            <IconButton
+                              aria-label="deleye category"
+                              component={Link}
+                              to={`/home/product-category/${row.id}/delete`}
+                              onClick={handleDeleteAction(row)}
+                            >
                               <DeleteIcon />
                             </IconButton>
                           </Tooltip>
@@ -218,6 +253,23 @@ export default function EnhancedTable() {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </React.Fragment>
+      <Dialog
+        open={deleteDialog}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{`Delete "${selected[0]?.name}" from category ?`}</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            No,
+          </Button>
+          <Button onClick={handleDeleteCategory} color="secondary" autoFocus>
+            Yes, Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
     </div>
   )
 }
