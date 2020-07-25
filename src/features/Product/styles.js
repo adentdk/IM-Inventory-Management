@@ -23,5 +23,9 @@ export default () => makeStyles((theme) => ({
   },
   fullHeight: {
     height: '100%'
-  }
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
 }))

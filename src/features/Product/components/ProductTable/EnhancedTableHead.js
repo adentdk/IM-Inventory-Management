@@ -7,9 +7,37 @@ import TableSortLabel from '@material-ui/core/TableSortLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 
 const headCells = [
-  { id: 'image', numeric: false, disablePadding: true, label: '' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Product Name' },
-  { id: 'actions', disablePadding: false, label: 'Actions' }
+  {
+    id: 'image',
+    numeric: false,
+    disablePadding: false,
+    label: ''
+  },
+  { id: 'name',
+    numeric: false,
+    disablePadding: false,
+    label: 'Name' 
+  },
+  { id: 'quantity',
+    numeric: true,
+    disablePadding: false,
+    label: 'Qty' 
+  },
+  { id: 'unit',
+    numeric: false,
+    disablePadding: false,
+    label: 'Unit' 
+  },
+  { id: 'category',
+    numeric: false,
+    disablePadding: false,
+    label: 'Category' 
+  },
+  { id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Actions'
+   }
 ]
 
 function EnhancedTableHead(props) {
@@ -32,7 +60,7 @@ function EnhancedTableHead(props) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.numeric ? 'right' : 'center'}
             padding={headCell.disablePadding ? 'none' : 'default'}
             sortDirection={orderBy === headCell.id ? order : false}
           >

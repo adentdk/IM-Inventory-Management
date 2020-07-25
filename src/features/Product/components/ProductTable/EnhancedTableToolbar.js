@@ -40,7 +40,7 @@ function EnhancedTableToolbar(props) {
   const { numSelected } = props
 
   const handleButtonAdd = () => {
-    history.push('product-category/add') 
+    history.push('product/add') 
   }
 
   return (

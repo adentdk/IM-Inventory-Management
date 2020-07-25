@@ -1,13 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Avatar from '@material-ui/core/Avatar'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
 import IconButton from '@material-ui/core/IconButton'
+import DetailIcon from '@material-ui/icons/Visibility'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 
 function descendingComparator(a, b, orderBy) {
@@ -36,6 +39,13 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0])
 }
 
+const useStyles = makeStyles((theme) => ({
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+}))
+
 export default function EnhancedTableBody(props) {
   const {
     products,
@@ -48,6 +58,9 @@ export default function EnhancedTableBody(props) {
     handleClick,
     handleDeleteAction
   } = props
+
+  const classes = useStyles()
+
   return (
     <TableBody>
     {stableSort(products, getComparator(order, orderBy))
@@ -72,10 +85,31 @@ export default function EnhancedTableBody(props) {
                 inputProps={{ 'aria-labelledby': labelId }}
               />
             </TableCell>
-            <TableCell component="th" id={labelId} scope="row" padding="none">
+            <TableCell component="th" id={labelId} scope="row" padding="none" align="center" >
+              <Avatar alt={row.name} src={row.image} className={classes.large} />
+            </TableCell>
+            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
               {row.name}
             </TableCell>
-            <TableCell align="right">
+            <TableCell component="td" id={labelId} scope="row" padding="none" align="right" >
+              {row.quantity}
+            </TableCell>
+            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
+              {row.unit.name}
+            </TableCell>
+            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
+              {row.category.name}
+            </TableCell>
+            <TableCell align="center">
+              <Tooltip title="Detail">
+                <IconButton
+                  aria-label="detail"
+                  component={Link}
+                  to={`/home/product/${row.id}/detail`}
+                >
+                  <DetailIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Edit">
                 <IconButton
                   aria-label="edit"
