@@ -39,6 +39,7 @@ export default function Dashboard() {
     }
 
     bootstrapAsync()
+    // eslint-disable-next-line
   }, [])
 
   return (
