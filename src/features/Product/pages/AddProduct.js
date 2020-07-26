@@ -75,25 +75,29 @@ export default function AddProduct() {
     setLoading(true)
 
     firestore.collection('products').add(data).then(result => {
-      return firebase
-        .uploadFile(storagePath, image, dbPath, {
-          name: result.id,
-          documentId: result.id,
-          metadataFactory: async (uploadRes, firebase, metadata, downloadURL) => {
-            const {
-              metadata: { name, fullPath }
-            } = uploadRes
-            const data = {
-              image: {
-                name,
-                fullPath,
-                url: downloadURL
+      if (image) {
+        return firebase
+          .uploadFile(storagePath, image, dbPath, {
+            name: result.id,
+            documentId: result.id,
+            metadataFactory: async (uploadRes, firebase, metadata, downloadURL) => {
+              const {
+                metadata: { name, fullPath }
+              } = uploadRes
+              const data = {
+                image: {
+                  name,
+                  fullPath,
+                  url: downloadURL
+                }
               }
+              await result.update(data)
+              return data
             }
-            await result.update(data)
-            return data
-          }
-        })
+          })
+      } else {
+        return Promise.resolve()
+      }
     })
     .then(() => {
       setLoading(false)

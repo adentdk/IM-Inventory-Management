@@ -7,6 +7,7 @@ import {
   Dashboard as DashboardLayout,
   Basic as BasicLayout
 } from './../layouts'
+import GenericNotFound from '../features/Error/pages/GenericNotFound'
 
 const Login = lazy(() => import('./../features/Login'))
 

@@ -93,7 +93,7 @@ export default function EditProduct() {
       category
     }
     if (image) {
-      const uploadTask = storageRef.child(product.image.fullPath).put(image)
+      const uploadTask = storageRef.child(product.image?.fullPath).put(image)
       uploadTask.on('state_changed', 
       (snapShot) => {
         //takes a snap shot of the process as it is happening
@@ -195,7 +195,7 @@ export default function EditProduct() {
         setCategory(product.category)
       }
       if (imageUrl === null) {
-        setImageUrl(product.image.url)
+        setImageUrl(product.image?.url)
       }
     }
 
