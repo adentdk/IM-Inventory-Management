@@ -10,7 +10,7 @@ import CountCard from '../components/CountCard'
 import { useDispatch } from 'react-redux'
 import { setAppBarTitle } from '../../../redux/actions/global-action'
 import { useFirestore } from 'react-redux-firebase'
-
+import useOnlineStatus from '@rehooks/online-status'
 const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
@@ -32,6 +32,8 @@ export default function Dashboard() {
   const dispatch = useDispatch()
   const firestore = useFirestore()
 
+  const onlineStatus = useOnlineStatus()
+
   const [categoryCount, setCategoryCount] = React.useState(0)
   const [productCount, setProductCount] = React.useState(0)
 
@@ -40,18 +42,34 @@ export default function Dashboard() {
   React.useEffect(() => {
     function bootstrapAsync() {
       dispatch(setAppBarTitle('Dashboard'))
+      if (onlineStatus) {
+        const data = {
+          categoryCount: 0,
+          productCount: 0,
+        }
 
-      firestore.collection('product-categories')
-      .orderBy('timestamp', 'desc').get()
-      .then(snapshot => {
-        setCategoryCount(snapshot.size)
-      })
+        Promise.all([
+          firestore.collection('product-categories').orderBy('timestamp', 'desc').get(),
+          firestore.collection('products').orderBy('timestamp', 'desc').get()
+        ]).then(([snapShot1, snapShot2]) => {
 
-      firestore.collection('products')
-      .orderBy('timestamp', 'desc').get()
-      .then(snapshot => {
-        setProductCount(snapshot.size)
-      })
+          console.log(snapShot1.size, snapShot2.size)
+
+          setCategoryCount(snapShot1.size)
+          setProductCount(snapShot2.size)
+
+          data.categoryCount = snapShot1.size
+          data.productCount = snapShot2.size
+
+          localStorage.setItem('dashboard', JSON.stringify(data))
+        })
+      } else {
+        const data = JSON.parse(localStorage.getItem('dashboard'))
+
+        setCategoryCount(data.categoryCount)
+        setCategoryCount(data.productCount)
+        
+      }
     }
 
     bootstrapAsync()
