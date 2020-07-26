@@ -142,6 +142,7 @@ export default function AddProduct() {
     }
 
     bootstrapAsync()
+    // eslint-disable-next-line
   }, [])
 
   return (

@@ -48,7 +48,6 @@ export default function EditProduct() {
 
   const product = useSelector((state) => state.firestore.data.productDetail)
 
-
   const loaded = isLoaded(product)
   const empty = isEmpty(product)
 
@@ -174,6 +173,7 @@ export default function EditProduct() {
     }
 
     bootstrapAsync()
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -206,8 +206,10 @@ export default function EditProduct() {
     quantity,
     unit,
     category,
+    price,
     imageUrl,
     product,
+    setPrice,
     setName,
     setQuantity,
     setUnit,
