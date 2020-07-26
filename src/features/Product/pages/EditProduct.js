@@ -185,13 +185,13 @@ export default function EditProduct() {
       if (quantity === 0) {
         setQuantity(product.quantity)
       }
-      if (unit === null) {
+      if (unit.id === null) {
         setUnit(product.unit)
       }
       if (price === null) {
         setPrice(product.price)
       }
-      if (category === null) {
+      if (category.id === null) {
         setCategory(product.category)
       }
       if (imageUrl === null) {
@@ -316,7 +316,7 @@ export default function EditProduct() {
                   native
                   fullWidth
                   value={category}
-                  onChange={e => setUnit(e.target.value)}
+                  onChange={e => setCategory(e.target.value)}
                   inputProps={{
                     name: 'product-unit',
                     id: 'age-native-simple',

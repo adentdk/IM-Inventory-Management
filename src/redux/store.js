@@ -9,9 +9,13 @@ import { getFirebase } from 'react-redux-firebase'
 import rootReducer from './reducers'
 
 const middlewares = [
-  logger,
   thunk.withExtraArgument(getFirebase)
 ]
+
+if (process.env.NODE_ENV === 'development') {
+  middlewares.push(logger)
+}
+
 const initialState = {}
 
 const persistConfig = {
