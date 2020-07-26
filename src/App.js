@@ -9,12 +9,13 @@ import './App.css'
 
 import {store} from './redux/store'
 import {rrfProps} from './services/firebase'
+import { SplashScreen } from './components'
 
 const browserHistory = createBrowserHistory()
 
 function AuthIsLoaded({ children }) {
   const auth = useSelector(state => state.firebase.auth)
-  if (!isLoaded(auth)) return <div>splash screen...</div>
+  if (!isLoaded(auth)) return <SplashScreen />
   return children
 }
 

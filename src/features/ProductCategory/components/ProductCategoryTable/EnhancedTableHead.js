@@ -4,7 +4,6 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import TableSortLabel from '@material-ui/core/TableSortLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Category Name' },
@@ -12,7 +11,7 @@ const headCells = [
 ]
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props
+  const { classes, order, orderBy, onRequestSort } = props
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property)
   }
@@ -20,14 +19,6 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all categories' }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}

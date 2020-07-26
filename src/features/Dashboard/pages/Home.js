@@ -1,15 +1,15 @@
 import React from 'react'
+
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Paper'
-import Chart from './../components/Chart'
-import Deposits from './../components/Deposits'
-import Orders from './../components/Orders'
+import CountCard from '../components/CountCard'
 import { useDispatch } from 'react-redux'
-import { setAppBarTitle, setScreenType } from '../../../redux/actions/global-action'
+import { setAppBarTitle } from '../../../redux/actions/global-action'
+import { useFirestore } from 'react-redux-firebase'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -30,12 +30,28 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles()
   const dispatch = useDispatch()
+  const firestore = useFirestore()
+
+  const [categoryCount, setCategoryCount] = React.useState(0)
+  const [productCount, setProductCount] = React.useState(0)
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
   React.useEffect(() => {
     function bootstrapAsync() {
       dispatch(setAppBarTitle('Dashboard'))
-      dispatch(setScreenType('view'))
+
+      firestore.collection('product-categories')
+      .orderBy('timestamp', 'desc').get()
+      .then(snapshot => {
+        setCategoryCount(snapshot.size)
+      })
+
+      firestore.collection('products')
+      .orderBy('timestamp', 'desc').get()
+      .then(snapshot => {
+        setProductCount(snapshot.size)
+      })
     }
 
     bootstrapAsync()
@@ -44,23 +60,25 @@ export default function Dashboard() {
 
   return (
     <Container maxWidth="lg" className={classes.container}>
-      <Grid container spacing={3}>
-        {/* Chart */}
-        <Grid item xs={12} md={8} lg={9}>
-          <Paper className={fixedHeightPaper}>
-            <Chart />
-          </Paper>
-        </Grid>
-        {/* Recent Deposits */}
+      <Grid container spacing={3} justify="center">
         <Grid item xs={12} md={4} lg={3}>
           <Paper className={fixedHeightPaper}>
-            <Deposits />
+            <CountCard
+              title={'Product Count'}
+              count={productCount}
+              linkname={'View Product List'}
+              to={'/home/product'}
+            />
           </Paper>
         </Grid>
-        {/* Recent Orders */}
-        <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            <Orders />
+        <Grid item xs={12} md={4} lg={3}>
+          <Paper className={fixedHeightPaper}>
+            <CountCard
+              title={'Category Count'}
+              count={categoryCount}
+              linkname={'View Category List'}
+              to={'/home/product-category'}
+            />
           </Paper>
         </Grid>
       </Grid>

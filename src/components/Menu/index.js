@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
-import PersonOutlined from '@material-ui/icons/PersonOutlined'
+import PersonOutlined from '@material-ui/icons/ExitToApp'
 import { useFirebase } from 'react-redux-firebase'
 
 export default function SimpleMenu() {
@@ -33,7 +33,6 @@ export default function SimpleMenu() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </div>

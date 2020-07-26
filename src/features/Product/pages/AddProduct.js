@@ -15,7 +15,7 @@ import { DropzoneDialog } from 'material-ui-dropzone'
 import { useFirestore, useFirebase } from 'react-redux-firebase'
 import { useHistory } from 'react-router-dom'
 
-import { Navbar } from '../../../components'
+import { Navbar, SplashScreen } from '../../../components'
 
 import styles from '../styles'
 
@@ -28,6 +28,7 @@ export default function AddProduct() {
   const firestore = useFirestore()
 
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState(null)
   const [name, setName] = useState('')
@@ -61,8 +62,11 @@ export default function AddProduct() {
       name,
       quantity,
       unit,
-      category
+      category,
+      timestamp: firestore.FieldValue.serverTimestamp()
     }
+
+    setLoading(true)
 
     firestore.collection('products').add(data).then(result => {
       return firebase
@@ -86,8 +90,11 @@ export default function AddProduct() {
         })
     })
     .then(() => {
-      console.log('File uploaded successfully')
+      setLoading(false)
       handleClose()
+    })
+    .catch(() => {
+      
     })
   }
 
@@ -103,7 +110,7 @@ export default function AddProduct() {
     const unitRef = firestore.collection('units').get()
     const categoryRef = firestore.collection('product-categories').get()
 
-    Promise.all([unitRef, categoryRef])
+    return Promise.all([unitRef, categoryRef])
       .then(([unitSnapShot, categorySnapShoot]) => {
         const unitData = []
         const categoryData = []
@@ -122,7 +129,7 @@ export default function AddProduct() {
 
   useEffect(() => {
     const bootstrapAsync = () => {
-      getReferences()
+      getReferences().then(() => setLoading(false))
     }
 
     bootstrapAsync()
@@ -223,9 +230,13 @@ export default function AddProduct() {
                 </MenuItem>
               ))}
             </TextField>
+
           </Box>
         </form>
       </DialogContent>
+      {loading && (
+        <SplashScreen />
+      )}
     </Dialog>
   )
 }

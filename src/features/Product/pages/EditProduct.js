@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Select from '@material-ui/core/Select'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
-import MenuItem from '@material-ui/core/MenuItem'
 import CloseIcon from '@material-ui/icons/Close'
 
 import Box from '@material-ui/core/Box'
@@ -21,7 +23,7 @@ import {
 } from 'react-redux-firebase'
 import { useHistory, useParams } from 'react-router-dom'
 
-import { Navbar } from '../../../components'
+import { Navbar, SplashScreen } from '../../../components'
 
 import styles from '../styles'
 import { useSelector } from 'react-redux'
@@ -50,6 +52,7 @@ export default function EditProduct() {
   const empty = isEmpty(product)
 
   const [open, setOpen] = useState(false)
+  const [loading, setloading] = useState(true)
   const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState(null)
   const [name, setName] = useState('')
@@ -76,10 +79,16 @@ export default function EditProduct() {
   }
 
   const handleSaveCategory = () => {
-    const storageRef = firebase.storage().ref('/products')
-
+    setloading(true)
+    const storageRef = firebase.storage().ref()
+    const data = {
+      name,
+      quantity,
+      unit,
+      category
+    }
     if (image) {
-      const uploadTask = storageRef.child(`/images/${image.name}`).put(image)
+      const uploadTask = storageRef.child(product.image.fullPath).put(image)
       uploadTask.on('state_changed', 
       (snapShot) => {
         //takes a snap shot of the process as it is happening
@@ -88,39 +97,35 @@ export default function EditProduct() {
         //catches the errors
         console.log(err)
       }, () => {
-        // gets the functions from storage refences the image storage in firebase by the children
-        // gets the download url then sets the image from firebase as the value for the imgUrl key:
-        storageRef.child(`/images/${image.name}`).getDownloadURL()
-         .then(fireBaseUrl => {
-            const data = {
-              name,
-              quantity,
-              image: fireBaseUrl,
-              unit,
-              category
-            }
-            return firestore.collection('products').doc(id).update(data)
-         })
-         .then(result => {
-            console.log(result)
-            handleClose()
-        }).catch(error => {
+        storageRef.child(`/products/${id}`).getDownloadURL()
+        .then(imageUrl => {
+          data.image = {
+            name: id,
+            fullPath: `/products${id}`,
+            url: imageUrl
+          }
+          return firestore.collection('products').doc(id).update(data)
+        })
+        .then(result => {
+          console.log(result)
+          handleClose()
+        })
+        .catch(error => {
           console.log(error)
+        })
+        .finally(() => {
+          setloading(false)
         })
       })
     } else {
-      const data = {
-        name,
-        quantity,
-        unit,
-        category
-      }
-      return firestore.collection('products').doc(id).update(data)
+      firestore.collection('products').doc(id).update(data)
         .then(result => {
           console.log(result)
           handleClose()
       }).catch(error => {
         console.log(error)
+      }).finally(() => {
+        setloading(false)
       })
     }
   }
@@ -137,7 +142,7 @@ export default function EditProduct() {
     const unitRef = firestore.collection('units').get()
     const categoryRef = firestore.collection('product-categories').get()
 
-    Promise.all([unitRef, categoryRef])
+    return Promise.all([unitRef, categoryRef])
       .then(([unitSnapShot, categorySnapShoot]) => {
         const unitData = []
         const categoryData = []
@@ -156,7 +161,7 @@ export default function EditProduct() {
 
   useEffect(() => {
     const bootstrapAsync = () => {
-      getReferences()
+      getReferences().then(() => setloading(false))
     }
 
     bootstrapAsync()
@@ -260,43 +265,51 @@ export default function EditProduct() {
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                id="product-unit"
-                label="Unit"
-                value={unit}
-                defaultChecked={unit}
-                onChange={e => setUnit(e.target.value)}
-                fullWidth
-                select
-                helperText="Please select product unit"
-              >
-                {references.units.map((option) => (
-                  <MenuItem key={option.id} value={option}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <FormControl fullWidth className={classes.formControl}>
+                <InputLabel shrink>Product Unit</InputLabel>
+                <Select
+                  native
+                  fullWidth
+                  value={unit}
+                  onChange={e => setUnit(e.target.value)}
+                  inputProps={{
+                    name: 'product-unit',
+                    id: 'age-native-simple',
+                  }}
+                >
+                  <option aria-label="None" value="" />
+                  {references.units.map(item => (
+                    <option key={item.id} value={item}>{item.name}</option>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
           <Box my={1}>
-            <TextField
-              id="product-category"
-              label="Category"
-              value={category}
-              onChange={e => setCategory(e.target.value)}
-              fullWidth
-              select
-              helperText="Please select product category"
-            >
-              {references.categories.map((option) => (
-                <MenuItem key={option.id} value={option}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField>
+            <FormControl fullWidth className={classes.formControl}>
+              <InputLabel shrink>Product Category</InputLabel>
+              <Select
+                native
+                fullWidth
+                value={category}
+                onChange={e => setUnit(e.target.value)}
+                inputProps={{
+                  name: 'product-unit',
+                  id: 'age-native-simple',
+                }}
+              >
+                <option aria-label="None" value="" />
+                {references.categories.map(item => (
+                  <option key={item.id} value={item}>{item.name}</option>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </form>
       </DialogContent>
+      {loading && (
+        <SplashScreen />
+      )}
     </Dialog>
   )
 }

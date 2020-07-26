@@ -15,7 +15,7 @@ import Button from '@material-ui/core/Button'
 import EnhancedTableSkeleton from './EnhancedTableSkeleton'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
-import { Snackbar } from '../../../../components'
+import { Snackbar, SplashScreen } from '../../../../components'
 import EnhancedTableBody from './EnhancedTableBody'
 
 const useStyles = makeStyles(() => ({
@@ -52,6 +52,7 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
+  const [loading, setLoading] = React.useState(false)
   const [deleteDialog, setDeleteDialog] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState(false)
@@ -113,15 +114,16 @@ export default function EnhancedTable() {
 
   const handleDelete = () => {
     const product = selected[0]
-    const imagePath = product.image.split('/')
-    console.log(imagePath)
+    setLoading(true)
     firestore.collection('products').doc(product.id).delete().then(() => {
-      // firebase.deleteFile(product.image).finally(() => {
-        handleClose()
-        setSnackbarMessage('The products was successfully deleted')
-        setSnackbarOpen(true)
-        setSelected([])
-      // })
+      return firebase.deleteFile(product.image.fullPath)
+    })
+    .finally(() => {
+      handleClose()
+      setLoading(false)
+      setSnackbarMessage('The products was successfully deleted')
+      setSnackbarOpen(true)
+      setSelected([])
     })
   }
 
@@ -129,7 +131,7 @@ export default function EnhancedTable() {
 
   const emptyRows = isEmpty(products)
 
-  const loading = !isLoaded(products)
+  const loadingFirestore = !isLoaded(products)
 
   const productCount = emptyRows ? 0 : products.length
 
@@ -137,7 +139,7 @@ export default function EnhancedTable() {
     <div className={classes.root}>
       <React.Fragment>
         <EnhancedTableToolbar numSelected={selected.length} />
-        {loading ? <EnhancedTableSkeleton /> : (
+        {loadingFirestore ? <EnhancedTableSkeleton /> : (
           <TableContainer>
             <Table
               className={classes.table}
@@ -195,6 +197,9 @@ export default function EnhancedTable() {
         </DialogActions>
       </Dialog>
       <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
+      {loading && (
+        <SplashScreen />
+      )}
     </div>
   )
 }

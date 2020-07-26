@@ -7,7 +7,7 @@ import ProductCategoryTable from './../components/ProductCategoryTable'
 
 import styles from './../styles'
 import { useDispatch } from 'react-redux'
-import { setAppBarTitle, setScreenType } from '../../../redux/actions/global-action'
+import { setAppBarTitle } from '../../../redux/actions/global-action'
 
 const useStyles = styles()
 
@@ -18,7 +18,6 @@ export default function ProductCategoryList() {
   React.useEffect(() => {
     function bootstrapAsync() {
       dispatch(setAppBarTitle('Product Category'))
-      dispatch(setScreenType('view'))
     }
 
     bootstrapAsync()

@@ -9,7 +9,6 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TablePagination from '@material-ui/core/TablePagination'
 import TableRow from '@material-ui/core/TableRow'
 import Tooltip from '@material-ui/core/Tooltip'
-import Checkbox from '@material-ui/core/Checkbox'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 
@@ -24,7 +23,7 @@ import EnhancedTableSkeleton from './EnhancedTableSkeleton'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 import { Link } from 'react-router-dom'
-import { Snackbar } from '../../../../components'
+import { Snackbar, SplashScreen } from '../../../../components'
 
 
 function descendingComparator(a, b, orderBy) {
@@ -86,6 +85,7 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
+  const [loading, setLoading] = React.useState(false)
   const [deleteDialog, setDeleteDialog] = React.useState(false)
   const [snackbarOpen, setSnackbarOpen] = React.useState(false)
   const [snackbarMessage, setSnackbarMessage] = React.useState(false)
@@ -110,26 +110,6 @@ export default function EnhancedTable() {
     setSelected([])
   }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name)
-    let newSelected = []
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      )
-    }
-
-    setSelected(newSelected)
-  }
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
   }
@@ -147,11 +127,19 @@ export default function EnhancedTable() {
 
   const handleDeleteCategory = () => {
     const category = selected[0]
-    firestore.collection('product-categories').doc(category.id).delete().then(() => {
+    setLoading(true)
+    firestore.collection('product-categories').doc(category.id).delete()
+    .then(() => {
       handleClose()
       setSnackbarMessage('The category was successfully deleted')
       setSnackbarOpen(true)
       setSelected([])
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    .finally(() => {
+      setLoading(false)
     })
   }
 
@@ -159,7 +147,7 @@ export default function EnhancedTable() {
 
   const emptyRows = isEmpty(productCategories)
 
-  const loading = !isLoaded(productCategories)
+  const loadingFirestore = !isLoaded(productCategories)
 
   const productCategoryCount = emptyRows ? 0 : productCategories.length
 
@@ -167,7 +155,7 @@ export default function EnhancedTable() {
     <div className={classes.root}>
       <React.Fragment>
         <EnhancedTableToolbar numSelected={selected.length} />
-        {loading ? <EnhancedTableSkeleton /> : (
+        {loadingFirestore ? <EnhancedTableSkeleton /> : (
           <TableContainer>
             <Table
               className={classes.table}
@@ -200,13 +188,6 @@ export default function EnhancedTable() {
                         key={row.name}
                         selected={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            onClick={(event) => handleClick(event, row.name)}
-                            checked={isItemSelected}
-                            inputProps={{ 'aria-labelledby': labelId }}
-                          />
-                        </TableCell>
                         <TableCell component="th" id={labelId} scope="row" padding="none">
                           {row.name}
                         </TableCell>
@@ -270,6 +251,9 @@ export default function EnhancedTable() {
         </DialogActions>
       </Dialog>
       <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
+      {loading && (
+        <SplashScreen />
+      )}
     </div>
   )
 }

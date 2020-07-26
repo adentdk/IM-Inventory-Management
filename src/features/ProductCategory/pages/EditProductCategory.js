@@ -12,7 +12,7 @@ import {
 } from 'react-redux-firebase'
 import { useHistory, useParams } from 'react-router-dom'
 
-import { Navbar } from '../../../components'
+import { Navbar, SplashScreen } from '../../../components'
 
 import styles from './../styles'
 import { useSelector } from 'react-redux'
@@ -36,11 +36,20 @@ export default function EditProductCategory() {
   const productCategories = useSelector((state) => state.firestore.data.productCategoryDetail)
 
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSaveCategory = () => {
-    firestore.collection('product-categories').doc(id).update({name}).then(() => {
-      handleClose()
-    }) 
+    setLoading(true)
+    firestore.collection('product-categories').doc(id).update({name})
+      .then(() => {
+        handleClose()
+      }) 
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   const handleClose = () => {
@@ -91,6 +100,9 @@ export default function EditProductCategory() {
             autoFocus
           />
         </DialogContent>
+      )}
+      {loading && (
+        <SplashScreen />
       )}
     </Dialog>
   )

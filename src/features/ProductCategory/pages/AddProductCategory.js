@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField'
 import { useFirestore } from 'react-redux-firebase'
 import { useHistory } from 'react-router-dom'
 
-import { Navbar } from '../../../components'
+import { Navbar, SplashScreen } from '../../../components'
 
 import styles from './../styles'
 
@@ -19,12 +19,20 @@ export default function AddProductCategory() {
   const firestore = useFirestore()
 
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSaveCategory = () => {
-    console.log(history)
-    firestore.collection('product-categories').add({name}).then(() => {
+    setLoading(true)
+    firestore.collection('product-categories').add({
+      name,
+      timestamp: firestore.FieldValue.serverTimestamp()
+    }).then(() => {
       handleClose()
-    }) 
+    }).catch(error => {
+      console.log(error)
+    }).finally(() => {
+      setLoading(false)
+    })
   }
 
   const handleClose = () => {
@@ -56,6 +64,9 @@ export default function AddProductCategory() {
           autoFocus
         />
       </DialogContent>
+      {loading && (
+        <SplashScreen />
+      )}
     </Dialog>
   )
 }
