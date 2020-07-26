@@ -19,11 +19,10 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import EnhancedTableSkeleton from './EnhancedTableSkeleton'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 import { Link } from 'react-router-dom'
-import { Snackbar, SplashScreen } from '../../../../components'
+import { Snackbar, SplashScreen, SkeletonTable } from '../../../../components'
 
 
 function descendingComparator(a, b, orderBy) {
@@ -155,7 +154,7 @@ export default function EnhancedTable() {
     <div className={classes.root}>
       <React.Fragment>
         <EnhancedTableToolbar numSelected={selected.length} />
-        {loadingFirestore ? <EnhancedTableSkeleton /> : (
+        {loadingFirestore ? <SkeletonTable /> : (
           <TableContainer>
             <Table
               className={classes.table}

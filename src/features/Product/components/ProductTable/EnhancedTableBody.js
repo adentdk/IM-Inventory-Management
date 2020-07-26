@@ -75,19 +75,22 @@ export default function EnhancedTableBody(props) {
             key={row.name}
             selected={isItemSelected}
           >
-            <TableCell component="th" id={labelId} scope="row" padding="none" align="center" >
+            <TableCell component="th" id={labelId} scope="row" padding="default" align="center" >
               <Avatar alt={row.name} src={row.image?.url} className={classes.large} />
             </TableCell>
-            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
+            <TableCell component="td" id={labelId} scope="row" padding="default" align="left" >
               {row.name}
             </TableCell>
-            <TableCell component="td" id={labelId} scope="row" padding="none" align="right" >
+            <TableCell component="td" id={labelId} scope="row" padding="default" align="right" >
               {row.quantity}
             </TableCell>
-            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
+            <TableCell component="td" id={labelId} scope="row" padding="default" align="center" >
               {row.unit.name}
             </TableCell>
-            <TableCell component="td" id={labelId} scope="row" padding="none" align="center" >
+            <TableCell component="td" id={labelId} scope="row" padding="default" align="right" >
+              {row.price}/{row.unit.name}
+            </TableCell>
+            <TableCell component="td" id={labelId} scope="row" padding="default" align="left" >
               {row.category.name}
             </TableCell>
             <TableCell align="center">

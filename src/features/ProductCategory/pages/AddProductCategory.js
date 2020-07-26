@@ -10,6 +10,7 @@ import { useHistory } from 'react-router-dom'
 import { Navbar, SplashScreen } from '../../../components'
 
 import styles from './../styles'
+import { Snackbar } from '@material-ui/core'
 
 const useStyles = styles()
 export default function AddProductCategory() {
@@ -21,15 +22,21 @@ export default function AddProductCategory() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState(false)
+
   const handleSaveCategory = () => {
     setLoading(true)
     firestore.collection('product-categories').add({
       name,
       timestamp: firestore.FieldValue.serverTimestamp()
     }).then(() => {
+      setSnackbarMessage('Failed Save Category')
+      setSnackbarOpen(true)
       handleClose()
-    }).catch(error => {
-      console.log(error)
+    }).catch(() => {
+      setSnackbarMessage('Failed Save Category')
+      setSnackbarOpen(true)
     }).finally(() => {
       setLoading(false)
     })
@@ -64,6 +71,7 @@ export default function AddProductCategory() {
           autoFocus
         />
       </DialogContent>
+      <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
       {loading && (
         <SplashScreen />
       )}

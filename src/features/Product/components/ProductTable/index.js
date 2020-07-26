@@ -12,10 +12,9 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 
 import Button from '@material-ui/core/Button'
 
-import EnhancedTableSkeleton from './EnhancedTableSkeleton'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
-import { Snackbar, SplashScreen } from '../../../../components'
+import { Snackbar, SplashScreen, SkeletonTable } from '../../../../components'
 import EnhancedTableBody from './EnhancedTableBody'
 
 const useStyles = makeStyles(() => ({
@@ -139,7 +138,7 @@ export default function EnhancedTable() {
     <div className={classes.root}>
       <React.Fragment>
         <EnhancedTableToolbar numSelected={selected.length} />
-        {loadingFirestore ? <EnhancedTableSkeleton /> : (
+        {loadingFirestore ? <SkeletonTable /> : (
           <TableContainer>
             <Table
               className={classes.table}

@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom'
 import { Navbar, SplashScreen } from '../../../components'
 
 import styles from '../styles'
+import { Snackbar } from '@material-ui/core'
 
 const useStyles = styles()
 export default function AddProduct() {
@@ -32,6 +33,7 @@ export default function AddProduct() {
   const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState(null)
   const [name, setName] = useState('')
+  const [price, setPrice] = useState(0)
   const [quantity, setQuantity] = useState(0)
   const [unit, setUnit] = useState(() => ({
     id: null,
@@ -41,6 +43,9 @@ export default function AddProduct() {
     id: null,
     name: null
   }))
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState(false)
 
   const [references, setReferences] = useState(() => ({
     units: [],
@@ -63,6 +68,7 @@ export default function AddProduct() {
       quantity,
       unit,
       category,
+      price,
       timestamp: firestore.FieldValue.serverTimestamp()
     }
 
@@ -91,10 +97,13 @@ export default function AddProduct() {
     })
     .then(() => {
       setLoading(false)
+      setSnackbarMessage('Add Data Success')
+      setSnackbarOpen(true)
       handleClose()
     })
     .catch(() => {
-      
+      setSnackbarMessage('Add Data Failed')
+      setSnackbarOpen(true)
     })
   }
 
@@ -192,7 +201,18 @@ export default function AddProduct() {
                 id="product-category"
                 label="Quantity"
                 value={quantity}
+                type="number"
                 onChange={e => setQuantity(e.target.value)}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                id="product-price"
+                label="Price"
+                value={price}
+                type="number"
+                onChange={e => setPrice(e.target.value)}
                 fullWidth
               />
             </Grid>
@@ -213,27 +233,27 @@ export default function AddProduct() {
                 ))}
               </TextField>
             </Grid>
+            <Grid item xs={6}>
+              <TextField
+                id="product-category"
+                label="Category"
+                value={category}
+                onChange={e => setCategory(e.target.value)}
+                fullWidth
+                select
+                helperText="Please select product category"
+              >
+                {references.categories.map((option) => (
+                  <MenuItem key={option.id} value={option}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
           </Grid>
-          <Box my={1}>
-            <TextField
-              id="product-category"
-              label="Category"
-              value={category}
-              onChange={e => setCategory(e.target.value)}
-              fullWidth
-              select
-              helperText="Please select product category"
-            >
-              {references.categories.map((option) => (
-                <MenuItem key={option.id} value={option}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField>
-
-          </Box>
         </form>
       </DialogContent>
+      <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
       {loading && (
         <SplashScreen />
       )}

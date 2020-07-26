@@ -27,6 +27,7 @@ import { Navbar, SplashScreen } from '../../../components'
 
 import styles from '../styles'
 import { useSelector } from 'react-redux'
+import { Snackbar } from '@material-ui/core'
 
 const useStyles = styles()
 export default function EditProduct() {
@@ -56,6 +57,7 @@ export default function EditProduct() {
   const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState(null)
   const [name, setName] = useState('')
+  const [price, setPrice] = useState(null)
   const [quantity, setQuantity] = useState(0)
   const [unit, setUnit] = useState(() => ({
     id: null,
@@ -71,6 +73,9 @@ export default function EditProduct() {
     categories: []
   }))
 
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState(false)
+
   const handleImageChange = files => {
     const imgUrl = URL.createObjectURL(files[0])
     setImage(files[0])
@@ -85,6 +90,7 @@ export default function EditProduct() {
       name,
       quantity,
       unit,
+      price,
       category
     }
     if (image) {
@@ -106,12 +112,15 @@ export default function EditProduct() {
           }
           return firestore.collection('products').doc(id).update(data)
         })
-        .then(result => {
-          console.log(result)
+        .then(() => {
+          setSnackbarMessage('Edit Data Success')
+          setSnackbarOpen(true)
           handleClose()
         })
         .catch(error => {
           console.log(error)
+          setSnackbarMessage('Edit Data Failed')
+          setSnackbarOpen(true)
         })
         .finally(() => {
           setloading(false)
@@ -178,6 +187,9 @@ export default function EditProduct() {
       }
       if (unit === null) {
         setUnit(product.unit)
+      }
+      if (price === null) {
+        setPrice(product.price)
       }
       if (category === null) {
         setCategory(product.category)
@@ -260,7 +272,18 @@ export default function EditProduct() {
                 id="product-category"
                 label="Quantity"
                 value={quantity}
+                type="number"
                 onChange={e => setQuantity(e.target.value)}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                id="product-price"
+                label="Price"
+                value={price}
+                type="number"
+                onChange={e => setPrice(e.target.value)}
                 fullWidth
               />
             </Grid>
@@ -284,29 +307,30 @@ export default function EditProduct() {
                 </Select>
               </FormControl>
             </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth className={classes.formControl}>
+                <InputLabel shrink>Product Category</InputLabel>
+                <Select
+                  native
+                  fullWidth
+                  value={category}
+                  onChange={e => setUnit(e.target.value)}
+                  inputProps={{
+                    name: 'product-unit',
+                    id: 'age-native-simple',
+                  }}
+                >
+                  <option aria-label="None" value="" />
+                  {references.categories.map(item => (
+                    <option key={item.id} value={item}>{item.name}</option>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-          <Box my={1}>
-            <FormControl fullWidth className={classes.formControl}>
-              <InputLabel shrink>Product Category</InputLabel>
-              <Select
-                native
-                fullWidth
-                value={category}
-                onChange={e => setUnit(e.target.value)}
-                inputProps={{
-                  name: 'product-unit',
-                  id: 'age-native-simple',
-                }}
-              >
-                <option aria-label="None" value="" />
-                {references.categories.map(item => (
-                  <option key={item.id} value={item}>{item.name}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
         </form>
       </DialogContent>
+      <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
       {loading && (
         <SplashScreen />
       )}

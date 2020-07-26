@@ -16,6 +16,7 @@ import { Navbar, SplashScreen } from '../../../components'
 
 import styles from './../styles'
 import { useSelector } from 'react-redux'
+import { Snackbar } from '@material-ui/core'
 
 const useStyles = styles()
 export default function EditProductCategory() {
@@ -38,18 +39,22 @@ export default function EditProductCategory() {
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false)
+  const [snackbarMessage, setSnackbarMessage] = React.useState(false)
+
   const handleSaveCategory = () => {
     setLoading(true)
     firestore.collection('product-categories').doc(id).update({name})
-      .then(() => {
-        handleClose()
-      }) 
-      .catch(error => {
-        console.log(error)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+    .then(() => {
+      setSnackbarMessage('Failed Save Category')
+      setSnackbarOpen(true)
+      handleClose()
+    }).catch(() => {
+      setSnackbarMessage('Failed Save Category')
+      setSnackbarOpen(true)
+    }).finally(() => {
+      setLoading(false)
+    })
   }
 
   const handleClose = () => {
@@ -101,6 +106,8 @@ export default function EditProductCategory() {
           />
         </DialogContent>
       )}
+
+      <Snackbar open={snackbarOpen} setOpen={setSnackbarOpen} message={snackbarMessage} />
       {loading && (
         <SplashScreen />
       )}

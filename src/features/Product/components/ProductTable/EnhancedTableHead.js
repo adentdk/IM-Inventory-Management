@@ -18,7 +18,7 @@ const headCells = [
     label: 'Name' 
   },
   { id: 'quantity',
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: 'Qty' 
   },
@@ -26,6 +26,11 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: 'Unit' 
+  },
+  { id: 'price',
+    numeric: false,
+    disablePadding: false,
+    label: 'Price/unit' 
   },
   { id: 'category',
     numeric: false,
