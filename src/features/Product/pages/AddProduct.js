@@ -10,8 +10,6 @@ import Box from '@material-ui/core/Box'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 
-import { DropzoneDialog } from 'material-ui-dropzone'
-
 import { useFirestore, useFirebase } from 'react-redux-firebase'
 import { useHistory } from 'react-router-dom'
 
@@ -53,8 +51,8 @@ export default function AddProduct() {
   }))
 
   const handleImageChange = files => {
-    const imgUrl = URL.createObjectURL(files[0])
-    setImage(files[0])
+    const imgUrl = URL.createObjectURL(files.target.files[0])
+    setImage(files.target.files[0])
     setImageUrl(imgUrl)
     setOpen(false)
   }
@@ -119,6 +117,11 @@ export default function AddProduct() {
     }
   }
 
+  const handleTriggerFile = e => {
+    e.preventDefault()
+    document.getElementById('file').click()
+  }
+
   const getReferences = () => {
     const unitRef = firestore.collection('units').get()
     const categoryRef = firestore.collection('product-categories').get()
@@ -173,22 +176,13 @@ export default function AddProduct() {
               <Avatar alt={'Product Image'} src={imageUrl} className={classes.large} />
             </Box>
             <Box>
-              <Button fullWidth variant="contained" color="primary" onClick={() => setOpen(true)}>
+              <Button fullWidth variant="contained" color="primary" onClick={handleTriggerFile}>
                 Add Image
               </Button>
+              <Box display="none">
+                <input id="file" type="file" onChange={handleImageChange} />
+              </Box>
             </Box>
-            <DropzoneDialog
-              acceptedFiles={['image/*']}
-              cancelButtonText={'cancel'}
-              submitButtonText={'submit'}
-              filesLimit={1}
-              maxFileSize={3000000}
-              open={open}
-              onClose={() => setOpen(false)}
-              onSave={handleImageChange}
-              showPreviews={false}
-              showFileNamesInPreview={false}
-            />
           </Box>
           <Box my={1}>
             <TextField

@@ -12,8 +12,6 @@ import Box from '@material-ui/core/Box'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 
-import { DropzoneDialog } from 'material-ui-dropzone'
-
 import {
   useFirestore,
   useFirebase,
@@ -76,8 +74,8 @@ export default function EditProduct() {
   const [snackbarMessage, setSnackbarMessage] = React.useState(false)
 
   const handleImageChange = files => {
-    const imgUrl = URL.createObjectURL(files[0])
-    setImage(files[0])
+    const imgUrl = URL.createObjectURL(files.target.files[0])
+    setImage(files.target.files[0])
     setImageUrl(imgUrl)
     setOpen(false)
   }
@@ -88,9 +86,9 @@ export default function EditProduct() {
     const data = {
       name,
       quantity,
-      unit,
+      unit: references.units.find(a => a.id === unit),
       price,
-      category
+      category: references.categories.find(a => a.id === category)
     }
     if (image) {
       const uploadTask = storageRef.child(product.image?.fullPath).put(image)
@@ -186,13 +184,13 @@ export default function EditProduct() {
         setQuantity(product.quantity)
       }
       if (unit.id === null) {
-        setUnit(product.unit)
+        setUnit(product.unit?.id)
       }
       if (price === null) {
         setPrice(product.price)
       }
       if (category.id === null) {
-        setCategory(product.category)
+        setCategory(product.category?.id)
       }
       if (imageUrl === null) {
         setImageUrl(product.image?.url)
@@ -244,19 +242,10 @@ export default function EditProduct() {
               <Button fullWidth variant="contained" color="primary" onClick={() => setOpen(true)}>
                 Add Image
               </Button>
+              <Box display="none">
+                <input id="file" type="file" onChange={handleImageChange} />
+              </Box>
             </Box>
-            <DropzoneDialog
-              acceptedFiles={['image/*']}
-              cancelButtonText={'cancel'}
-              submitButtonText={'submit'}
-              filesLimit={1}
-              maxFileSize={3000000}
-              open={open}
-              onClose={() => setOpen(false)}
-              onSave={handleImageChange}
-              showPreviews={false}
-              showFileNamesInPreview={false}
-            />
           </Box>
           <Box my={1}>
             <TextField
@@ -304,7 +293,7 @@ export default function EditProduct() {
                 >
                   <option aria-label="None" value="" />
                   {references.units.map(item => (
-                    <option key={item.id} value={item}>{item.name}</option>
+                    <option key={item.id} value={item.id}>{item.name}</option>
                   ))}
                 </Select>
               </FormControl>
@@ -324,7 +313,7 @@ export default function EditProduct() {
                 >
                   <option aria-label="None" value="" />
                   {references.categories.map(item => (
-                    <option key={item.id} value={item}>{item.name}</option>
+                    <option key={item.id} value={item.id}>{item.name}</option>
                   ))}
                 </Select>
               </FormControl>
