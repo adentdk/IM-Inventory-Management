@@ -11,3 +11,9 @@
 5. Create file .env based .env.template
 6. run `npm install` or `yarn`
 7. run `npm start` or `yarn start`
+##### *
+## DEMONTRATION
+[Demo link](http://im-inventory-management.web.app/)
+with
+email: admin@dev.im
+password: 123456
